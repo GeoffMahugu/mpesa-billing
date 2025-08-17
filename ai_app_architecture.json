@@ -1,0 +1,681 @@
+{
+  "app": {
+    "name": "MpesaBilling",
+    "description": "Web app to sell products and accept M-Pesa STK Push payments with real-time monitoring, admin back office, and secure RBAC.",
+    "version": "1.0.1",
+    "monorepo": false,
+    "deployment": {
+      "hosting": "Vercel",
+      "region": "auto",
+      "database": "MongoDB Atlas",
+      "cdn": "Vercel Edge Network"
+    }
+  },
+  "tech_stack": {
+    "frontend": {
+      "framework": "Next.js",
+      "language": "JavaScript",
+      "styling": ["TailwindCSS"],
+      "components": ["Aceternity UI (ui.aceternity.com)"],
+      "animation": ["framer-motion (Motion.js)"],
+      "3d": ["Three.js"]
+    },
+    "backend": {
+      "framework": "Next.js API Routes",
+      "language": "JavaScript",
+      "runtime": "Node.js 20+"
+    },
+    "database": {
+      "engine": "MongoDB",
+      "connection": "Mongoose"
+    },
+    "auth": {
+      "library": "NextAuth.js",
+      "providers": [
+        "Credentials (email + password, bcrypt hashed)",
+        "Google OAuth"
+      ],
+      "session_strategy": "jwt",
+      "password_reset": "token-based email link",
+      "email_verification": "optional (flag off by default)"
+    },
+    "payments": {
+      "provider": "M-Pesa",
+      "flow": "STK Push",
+      "sandbox": true
+    }
+  },
+  "environments": {
+    "dev": {
+      "base_url": "http://localhost:3000",
+      "mpesa_sandbox": true
+    },
+    "staging": {
+      "base_url": "https://staging.mpesabilling.app",
+      "mpesa_sandbox": true
+    },
+    "prod": {
+      "base_url": "https://mpesabilling.app",
+      "mpesa_sandbox": false
+    }
+  },
+  "env_vars": {
+    "NEXTAUTH_URL": "",
+    "NEXTAUTH_SECRET": "",
+    "GOOGLE_CLIENT_ID": "",
+    "GOOGLE_CLIENT_SECRET": "",
+    "SMTP_HOST": "",
+    "SMTP_PORT": "",
+    "SMTP_USER": "",
+    "SMTP_PASS": "",
+    "EMAIL_FROM": "",
+    "MONGODB_URI": "",
+    "MONGODB_DB": "mpesabilling",
+    "MPESA_CONSUMER_KEY": "",
+    "MPESA_CONSUMER_SECRET": "",
+    "MPESA_SHORTCODE": "",
+    "MPESA_PASSKEY": "",
+    "MPESA_CALLBACK_URL": "https://mpesabilling.app/api/payments/mpesa/callback",
+    "MPESA_ENV": "sandbox|production",
+    "RATE_LIMIT_WINDOW_MS": "60000",
+    "RATE_LIMIT_MAX": "100",
+    "ENCRYPTION_KEY": "",
+    "HASH_SALT_ROUNDS": "12",
+    "ENABLE_SSE": "true",
+    "ENABLE_WS": "false",
+    "AI_THEME_RULES_PATH": "ai_theme_rules.json",
+    "ADMIN_ALLOWED_EMAILS": "comma,separated,google-accounts@company.com",
+    "ADMIN_ALLOWED_DOMAIN": "company.com"
+  },
+  "security": {
+    "headers": {
+      "content_security_policy": "default-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.safaricom.co.ke",
+      "strict_transport_security": "max-age=63072000; includeSubDomains; preload",
+      "x_frame_options": "DENY",
+      "x_content_type_options": "nosniff",
+      "referrer_policy": "no-referrer",
+      "permissions_policy": "geolocation=(), camera=(), microphone=()"
+    },
+    "api_protection": {
+      "csrf": true,
+      "cors": {
+        "origins": ["https://mpesabilling.app", "https://staging.mpesabilling.app"],
+        "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+      },
+      "rate_limiting": {
+        "window_ms": 60000,
+        "max_requests": 100,
+        "key_by": "ip+session"
+      },
+      "input_validation": "zod",
+      "output_encoding": true,
+      "audit_logging": false,
+      "ip_allowlist_for_webhooks": ["ALLOWLIST_OPTIONAL"],
+      "replay_protection": {
+        "idempotency_keys": true,
+        "timestamp_skew_ms": 300000
+      }
+    },
+    "data": {
+      "encryption_at_rest": true,
+      "field_level_encryption": ["transactions.checkoutRequestID", "users.email"],
+      "tokenization": ["payments.accessToken"],
+      "password_hashing": "bcrypt (HASH_SALT_ROUNDS)"
+    }
+  },
+  "roles_permissions": {
+    "roles": ["guest", "user", "admin"],
+    "permissions": {
+      "guest": ["products.read", "auth.signin", "auth.signup"],
+      "user": ["products.read", "orders.create", "orders.read.self", "payments.initiate", "profile.read.self", "profile.update.self"],
+      "admin": ["*"]
+    }
+  },
+  "ui_theming": {
+    "tailwind": {
+      "config": {
+        "dark_mode": "class",
+        "content_globs": ["./app/**/*.{js,jsx}", "./components/**/*.{js,jsx}"],
+        "theme_tokens": "import from ai_theme_rules.json"
+      }
+    },
+    "component_library": "Aceternity UI components composed with Tailwind and framer-motion",
+    "states": ["idle", "loading", "success", "error", "disabled", "empty"],
+    "a11y": {
+      "contrast_ratio": "WCAG AA",
+      "focus_states": true,
+      "keyboard_navigation": true,
+      "aria_labels": true
+    }
+  },
+  "routing": {
+    "public": [
+      "/",
+      "/auth/signin",
+      "/auth/signup",
+      "/auth/forgot-password",
+      "/auth/reset-password",
+      "/products",
+      "/products/[id]"
+    ],
+    "protected_user": [
+      "/orders",
+      "/orders/[id]",
+      "/profile"
+    ],
+    "protected_admin": [
+      "/admin",
+      "/admin/dashboard",
+      "/admin/stock",
+      "/admin/sales",
+      "/admin/account",
+      "/admin/audit-logs"
+    ],
+    "api": [
+      "/api/auth/[...nextauth]",
+      "/api/auth/password/reset/request",
+      "/api/auth/password/reset/confirm",
+      "/api/products",
+      "/api/products/[id]",
+      "/api/orders",
+      "/api/orders/[id]",
+      "/api/payments/mpesa/stkpush",
+      "/api/payments/mpesa/callback",
+      "/api/realtime/sse",
+      "/api/metrics/visits",
+      "/api/admin/stock",
+      "/api/admin/sales",
+      "/api/admin/account",
+      "/api/admin/audit-logs"
+    ]
+  },
+  "pages": {
+    "landing_or_login": {
+      "path": "/auth/signin",
+      "components": ["Aceternity UI: Auth form, Input, Button, Card, Toast"],
+      "features": ["email + password (credentials)", "Google OAuth", "forgot password link"],
+      "edge_cases": ["invalid credentials", "rate limited", "oauth denied"]
+    },
+    "signup": {
+      "path": "/auth/signup",
+      "components": ["Aceternity UI: Form, Input, Password, Button, Card"],
+      "features": ["capture name, email, password", "password strength meter", "terms checkbox"],
+      "security": ["server-side validation", "bcrypt hash before save", "unique email constraint"]
+    },
+    "forgot_password": {
+      "path": "/auth/forgot-password",
+      "features": ["request reset by email"],
+      "notes": "Sends reset email with short-lived token (15–30 min)"
+    },
+    "reset_password": {
+      "path": "/auth/reset-password?token=...",
+      "features": ["set new password"],
+      "security": ["validate token, single-use, expire on success"]
+    },
+    "catalog": {
+      "path": "/products",
+      "components": ["Aceternity UI: Cards, Grid, Badge, Skeleton, Search"],
+      "features": ["search", "filter", "sort", "quick purchase", "skeleton loaders"]
+    },
+    "product_details": {
+      "path": "/products/[id]",
+      "components": ["Aceternity UI: Tabs, Gallery, CTA Button, Price Badge"],
+      "features": ["gallery", "price", "stock badge", "Buy Now (STK Push)"]
+    },
+    "orders_list": {
+      "path": "/orders",
+      "components": ["Aceternity UI: Table, Pagination, Status Chips, Empty State"],
+      "features": ["pagination", "status chips", "export csv"]
+    },
+    "order_details": {
+      "path": "/orders/[id]",
+      "components": ["Aceternity UI: Timeline, Badge, Code Block for IDs, CTA Buttons"],
+      "features": ["live status via SSE", "transaction timeline", "receipt download"]
+    },
+    "profile": {
+      "path": "/profile",
+      "components": ["Aceternity UI: Form, Avatar, Inputs, Button"],
+      "features": ["update name/email", "change password", "delete account (hard/soft toggle)"]
+    },
+    "admin": {
+      "dashboard": {
+        "path": "/admin/dashboard",
+        "components": ["Aceternity UI: Cards, KPI widgets, Charts, Toggle"],
+        "widgets": ["available_stock", "sold_stock", "account_balance_toggle", "site_visits", "recent_transactions"]
+      },
+      "stock": {
+        "path": "/admin/stock",
+        "components": ["Aceternity UI: Data Table, Drawer/Form, Upload"],
+        "features": ["CRUD products", "bulk upload CSV", "inventory adjustments"]
+      },
+      "sales": {
+        "path": "/admin/sales",
+        "components": ["Aceternity UI: Charts, Date Range Picker, Cards"],
+        "features": ["revenue charts", "top products", "export"]
+      },
+      "account": {
+        "path": "/admin/account",
+        "components": ["Aceternity UI: Forms, Secrets Input, Toggle"],
+        "features": ["business profile", "mpesa credentials", "webhook url"]
+      },
+      "audit_logs": {
+        "path": "/admin/audit-logs",
+        "components": ["Aceternity UI: Table, Filters"],
+        "features": ["search", "filters", "immutable logs (DB only, no external observability)"]
+      }
+    }
+  },
+  "user_journeys": {
+    "happy_path": [
+      "User visits /auth/signin",
+      "Signs in with email + password OR Google OAuth",
+      "Redirect to /products",
+      "Selects product -> /products/[id]",
+      "Clicks Buy Now -> if no open order, creates one; then POST /api/payments/mpesa/stkpush",
+      "Receives M-Pesa STK prompt on phone, approves",
+      "Callback updates order -> success",
+      "Auto-redirect or CTA to /orders/[id] with live status via SSE",
+      "Sees receipt and order recorded"
+    ],
+    "edge_cases": [
+      "Wrong password -> error toast (do not reveal which field is wrong)",
+      "Account not found -> generic auth error with sign-up CTA",
+      "STK cancelled -> order marked failed with retry option",
+      "Callback delayed -> order shows pending with polling/SSE",
+      "Insufficient funds -> failure with support link",
+      "Duplicate click -> idempotency prevents double charge",
+      "Password reset -> request token, set new password, sign in"
+    ]
+  },
+  "admin_journeys": {
+    "happy_path": [
+      "Admin navigates to /admin (separate pathguard)",
+      "Logs in via Google OAuth or email + password; must satisfy admin guard (role=admin and/or allowed domain/email)",
+      "Lands on /admin/dashboard",
+      "Views stock, balance (toggle visibility), visits, recent transactions",
+      "Manages stock in /admin/stock",
+      "Reviews sales in /admin/sales",
+      "Updates business details and API keys in /admin/account",
+      "Reviews DB-stored audit logs in /admin/audit-logs"
+    ],
+    "edge_cases": [
+      "Non-admin tries /admin/* -> 403 and redirect",
+      "Balance hidden by default on shared screens",
+      "Bulk upload validation failures with row-level errors",
+      "Admin email not on allowlist -> 403"
+    ]
+  },
+  "api_contracts": {
+    "auth": {
+      "nextauth": "/api/auth/[...nextauth]",
+      "POST /api/auth/password/reset/request": {
+        "body": { "email": "string" },
+        "response": "{ ok: true }",
+        "notes": "Creates short-lived token, emails reset link"
+      },
+      "POST /api/auth/password/reset/confirm": {
+        "body": { "token": "string", "newPassword": "string" },
+        "response": "{ ok: true }",
+        "notes": "Consumes token, updates hashed password"
+      }
+    },
+    "products": {
+      "GET /api/products": {
+        "query": { "q": "string?", "limit": "number?", "page": "number?", "sort": "string?" },
+        "response": { "items": "Product[]", "total": "number", "page": "number", "pages": "number" },
+        "auth": "public"
+      },
+      "POST /api/products": {
+        "body": "ProductInput",
+        "response": "Product",
+        "auth": "admin"
+      },
+      "GET /api/products/[id]": {
+        "response": "Product",
+        "auth": "public"
+      },
+      "PATCH /api/products/[id]": {
+        "body": "Partial<ProductInput>",
+        "response": "Product",
+        "auth": "admin"
+      },
+      "DELETE /api/products/[id]": {
+        "response": "{ deleted: boolean }",
+        "auth": "admin"
+      }
+    },
+    "orders": {
+      "POST /api/orders": {
+        "body": { "productId": "ObjectId", "quantity": "number" },
+        "response": "Order",
+        "auth": "user"
+      },
+      "GET /api/orders": {
+        "response": "Order[]",
+        "auth": "user (self only) or admin (all)"
+      },
+      "GET /api/orders/[id]": {
+        "response": "Order",
+        "auth": "user (self only) or admin"
+      }
+    },
+    "payments": {
+      "POST /api/payments/mpesa/stkpush": {
+        "body": {
+          "orderId": "ObjectId",
+          "phoneNumber": "E.164 string",
+          "amount": "number",
+          "idempotencyKey": "string"
+        },
+        "response": {
+          "checkoutRequestID": "string",
+          "merchantRequestID": "string",
+          "status": "pending|error"
+        },
+        "auth": "user",
+        "notes": "Creates Transaction with status=pending; pushes SSE event"
+      },
+      "POST /api/payments/mpesa/callback": {
+        "body": "MpesaCallbackPayload",
+        "response": "{ ok: true }",
+        "auth": "webhook (signed + allowlist)",
+        "notes": "Validates request, updates Transaction + Order; pushes SSE event"
+      }
+    },
+    "realtime": {
+      "GET /api/realtime/sse": {
+        "query": { "channel": "orders|transactions" },
+        "response": "text/event-stream",
+        "auth": "user or admin"
+      }
+    },
+    "metrics": {
+      "POST /api/metrics/visits": {
+        "body": { "path": "string", "ref": "string?", "ts": "number" },
+        "response": "{ ok: true }",
+        "auth": "public (rate-limited)"
+      }
+    },
+    "admin": {
+      "GET /api/admin/stock": { "response": "InventorySummary", "auth": "admin" },
+      "GET /api/admin/sales": { "response": "SalesSummary", "auth": "admin" },
+      "GET /api/admin/account": { "response": "BusinessAccount", "auth": "admin" },
+      "PATCH /api/admin/account": { "body": "Partial<BusinessAccountInput>", "response": "BusinessAccount", "auth": "admin" },
+      "GET /api/admin/audit-logs": { "response": "AuditLog[]", "auth": "admin" }
+    }
+  },
+  "data_models": {
+    "User": {
+      "_id": "ObjectId",
+      "email": "string (unique, encrypted at rest)",
+      "name": "string?",
+      "image": "string?",
+      "passwordHash": "string (bcrypt)",
+      "role": "enum('user','admin')",
+      "passwordReset": {
+        "token": "string?",
+        "expiresAt": "Date?"
+      },
+      "createdAt": "Date",
+      "updatedAt": "Date",
+      "indexes": ["email(unique)"]
+    },
+    "Product": {
+      "_id": "ObjectId",
+      "name": "string",
+      "slug": "string(unique)",
+      "description": "string",
+      "price": "number",
+      "currency": "string",
+      "stock": "number",
+      "images": "string[]",
+      "active": "boolean",
+      "createdAt": "Date",
+      "updatedAt": "Date",
+      "indexes": ["slug(unique)", "active", "price"]
+    },
+    "Order": {
+      "_id": "ObjectId",
+      "userId": "ObjectId -> User",
+      "items": [{ "productId": "ObjectId -> Product", "name": "string", "unitPrice": "number", "qty": "number", "subtotal": "number" }],
+      "total": "number",
+      "currency": "string",
+      "status": "enum('pending','paid','failed','cancelled')",
+      "transactionId": "ObjectId -> Transaction?",
+      "shippingAddress": "object?",
+      "createdAt": "Date",
+      "updatedAt": "Date",
+      "indexes": ["userId", "status", "createdAt"]
+    },
+    "Transaction": {
+      "_id": "ObjectId",
+      "orderId": "ObjectId -> Order",
+      "userId": "ObjectId -> User",
+      "provider": "enum('mpesa')",
+      "amount": "number",
+      "currency": "string",
+      "status": "enum('pending','success','failed')",
+      "merchantRequestID": "string(encrypted)",
+      "checkoutRequestID": "string(encrypted, unique)",
+      "mpesaReceiptNumber": "string?",
+      "resultCode": "string?",
+      "resultDesc": "string?",
+      "rawCallback": "object",
+      "createdAt": "Date",
+      "updatedAt": "Date",
+      "indexes": ["orderId", "userId", "checkoutRequestID(unique)", "status", "createdAt"]
+    },
+    "BusinessAccount": {
+      "_id": "ObjectId",
+      "businessName": "string",
+      "tillOrPaybill": "string",
+      "phoneNumber": "string",
+      "mpesa": {
+        "shortcode": "string",
+        "passkey": "string(encrypted)",
+        "environment": "enum('sandbox','production')",
+        "callbackUrl": "string"
+      },
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    },
+    "AuditLog": {
+      "_id": "ObjectId",
+      "actorId": "ObjectId -> User",
+      "actorRole": "string",
+      "action": "string",
+      "target": "string",
+      "meta": "object",
+      "ip": "string",
+      "userAgent": "string",
+      "createdAt": "Date",
+      "indexes": ["actorId", "createdAt"]
+    },
+    "VisitMetric": {
+      "_id": "ObjectId",
+      "path": "string",
+      "ref": "string?",
+      "ts": "Date",
+      "ipHash": "string",
+      "indexes": ["path", "ts"]
+    }
+  },
+  "database": {
+    "naming": "lowerCamelCase collections",
+    "collections": ["users", "products", "orders", "transactions", "businessaccounts", "auditlogs", "visitmetrics"],
+    "indexes": {
+      "users": [{ "email": 1, "unique": true }],
+      "products": [{ "slug": 1, "unique": true }, { "price": 1 }, { "active": 1 }],
+      "orders": [{ "userId": 1 }, { "status": 1 }, { "createdAt": -1 }],
+      "transactions": [{ "checkoutRequestID": 1, "unique": true }, { "orderId": 1 }, { "status": 1 }, { "createdAt": -1 }],
+      "auditlogs": [{ "actorId": 1 }, { "createdAt": -1 }],
+      "visitmetrics": [{ "path": 1 }, { "ts": -1 }]
+    }
+  },
+  "payments": {
+    "provider": "M-Pesa",
+    "flows": {
+      "stk_push": {
+        "steps": [
+          "Ensure user is authenticated (Credentials or Google)",
+          "Create/validate Order",
+          "Generate OAuth token with consumer key/secret",
+          "Construct password=Base64(ShortCode+Passkey+Timestamp)",
+          "POST STK push request",
+          "Store Transaction pending with idempotencyKey",
+          "Receive callback -> verify request validity",
+          "Update Transaction + Order",
+          "Emit SSE event to client"
+        ],
+        "idempotency": "Use `idempotencyKey` per order + phone + amount"
+      }
+    },
+    "webhooks": {
+      "callback_security": [
+        "validate source (IP allowlist optional)",
+        "verify body structure and mandatory fields",
+        "check timestamp skew",
+        "ensure checkoutRequestID exists and is pending"
+      ],
+      "retries": "Handle duplicate callbacks idempotently"
+    }
+  },
+  "realtime": {
+    "transport": "Server-Sent Events (SSE)",
+    "channels": ["orders", "transactions"],
+    "security": "auth required, user sees own events; admin sees all",
+    "events": ["order.created", "transaction.updated", "order.paid"]
+  },
+  "background_jobs": {
+    "queue": "In-memory or lightweight queue (optional)",
+    "jobs": [
+      "payment.settlement.poll (fallback)",
+      "email.receipt.send",
+      "metrics.rollup.daily"
+    ]
+  },
+  "caching": {
+    "strategy": {
+      "static_pages": "Next.js ISR for catalog if needed",
+      "api": "micro-caching 5-30s for GET /products",
+      "db_cache": "indexes + selective projection"
+    }
+  },
+  "rate_limiting": {
+    "global": { "window_ms": 60000, "max": 100 },
+    "sensitive_routes": {
+      "/api/payments/mpesa/stkpush": { "window_ms": 60000, "max": 5 },
+      "/api/payments/mpesa/callback": { "window_ms": 60000, "max": 100 }
+    }
+  },
+  "error_handling": {
+    "frontend": {
+      "toasts": true,
+      "error_boundaries": true,
+      "retry_cta": ["payments", "network"]
+    },
+    "backend": {
+      "standard_error_shape": { "ok": false, "code": "string", "message": "string", "details": "object?" },
+      "mapping": {
+        "ValidationError": "400",
+        "AuthError": "401",
+        "ForbiddenError": "403",
+        "NotFoundError": "404",
+        "RateLimitError": "429",
+        "ServerError": "500"
+      }
+    }
+  },
+  "analytics": {
+    "pageviews": true,
+    "events": ["product_view", "buy_now_click", "stkpush_initiated", "payment_success", "payment_fail"]
+  },
+  "emails": {
+    "provider": "SMTP",
+    "templates": ["password_reset_request", "password_reset_success", "order_receipt", "payment_failed"],
+    "localization": ["en"]
+  },
+  "files_storage": {
+    "images": {
+      "strategy": "hosted/static",
+      "optimization": "next/image"
+    }
+  },
+  "testing": {
+    "unit": ["Jest"],
+    "integration": ["testing-library / Playwright"],
+    "e2e": ["Playwright"],
+    "mocks": ["M-Pesa sandbox simulate"],
+    "coverage_target": 0.8
+  },
+  "ci_cd": {
+    "provider": "GitHub Actions",
+    "pipelines": [
+      "lint_and_test_on_pr",
+      "build_preview",
+      "deploy_staging_on_main",
+      "manual_promote_to_prod"
+    ],
+    "checks": ["typecheck", "unit_tests", "e2e_smoke"]
+  },
+  "performance": {
+    "lighthouse_targets": {
+      "performance": 90,
+      "accessibility": 95,
+      "best_practices": 95,
+      "seo": 90
+    },
+    "web_vitals": ["LCP<2.5s", "FID<100ms", "CLS<0.1"]
+  },
+  "feature_flags": {
+    "enable_bulk_upload": true,
+    "enable_threejs_product_view": true,
+    "enable_balance_mask_default": true
+  },
+  "dev_experience": {
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start",
+      "lint": "next lint",
+      "test": "jest"
+    },
+    "linting": ["eslint", "prettier"],
+    "commit": { "convention": "conventional-commits" }
+  },
+  "seed_data": {
+    "products": [
+      {
+        "name": "Starter Pack",
+        "slug": "starter-pack",
+        "description": "Intro product",
+        "price": 500,
+        "currency": "KES",
+        "stock": 50,
+        "images": ["/images/starter.jpg"],
+        "active": true
+      },
+      {
+        "name": "Pro Pack",
+        "slug": "pro-pack",
+        "description": "Advanced product",
+        "price": 1500,
+        "currency": "KES",
+        "stock": 30,
+        "images": ["/images/pro.jpg"],
+        "active": true
+      }
+    ],
+    "businessAccount": {
+      "businessName": "Sprout Delights Ltd",
+      "tillOrPaybill": "123456",
+      "phoneNumber": "+254700000000",
+      "mpesa": {
+        "shortcode": "123456",
+        "passkey": "ENCRYPTED_PLACEHOLDER",
+        "environment": "sandbox",
+        "callbackUrl": "https://staging.mpesabilling.app/api/payments/mpesa/callback"
+      }
+    }
+  }
+}
