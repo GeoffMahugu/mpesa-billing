@@ -1,0 +1,19 @@
+{
+  "servers": {
+    "MongoDB": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "-e",
+        "MDB_MCP_READ_ONLY=true",
+        "-e",
+        "MDB_MCP_API_CLIENT_ID=$MDB_MCP_API_CLIENT_ID",
+        "-e",
+        "MDB_MCP_API_CLIENT_SECRET=$MDB_MCP_API_CLIENT_SECRET",
+        "mongodb/mongodb-mcp-server:latest"
+      ]
+    }
+  }
+}
