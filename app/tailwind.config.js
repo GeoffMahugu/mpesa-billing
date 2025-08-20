@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-const theme = require('../ai_theme_rules.json');
+const theme = require("./lib/ai_theme_rules.json");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {

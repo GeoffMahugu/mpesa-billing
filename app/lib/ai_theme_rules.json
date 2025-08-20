@@ -1,0 +1,158 @@
+{
+  "designSystem": {
+    "colors": {
+      "primaryGreen": "#3A7C59",
+      "secondaryGreen": "#6FAE8A",
+      "accentYellow": "#FFD55A",
+      "neutralWhite": "#FFFFFF",
+      "neutralOffWhite": "#F8F8F4",
+      "neutralGrayLight": "#EAEAEA",
+      "neutralGray": "#C8C8C8",
+      "neutralDark": "#333333",
+      "successGreen": "#4CAF50",
+      "errorRed": "#E74C3C",
+      "warningOrange": "#F39C12",
+      "infoBlue": "#3498DB",
+      "shadowBase": "rgba(0, 0, 0, 0.08)",
+      "shadowStrong": "rgba(0, 0, 0, 0.16)"
+    },
+    "typography": {
+      "h1": { "fontSize": "32px", "fontWeight": "700", "color": "#333333" },
+      "h2": { "fontSize": "24px", "fontWeight": "600", "color": "#333333" },
+      "h3": { "fontSize": "20px", "fontWeight": "600", "color": "#3A7C59" },
+      "body": { "fontSize": "16px", "fontWeight": "400", "color": "#333333" },
+      "bodyLight": {
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "#6B6B6B"
+      },
+      "caption": { "fontSize": "14px", "fontWeight": "400", "color": "#999999" }
+    },
+    "elementStyling": {
+      "cards": {
+        "container": {
+          "background": "#FFFFFF",
+          "border": "1px solid #EAEAEA",
+          "borderRadius": "16px",
+          "shadow": "0px 4px 12px rgba(0,0,0,0.08)",
+          "padding": "16px",
+          "hover": {
+            "shadow": "0px 6px 16px rgba(0,0,0,0.12)",
+            "transform": "translateY(-2px)"
+          }
+        },
+        "header": { "textColor": "#333333", "fontWeight": "600" },
+        "content": { "textColor": "#6B6B6B" },
+        "icons": {
+          "fill": "#3A7C59",
+          "background": "#F0F8F4",
+          "borderRadius": "12px"
+        }
+      },
+      "buttons": {
+        "primary": {
+          "default": {
+            "background": "linear-gradient(90deg, #3A7C59 0%, #6FAE8A 100%)",
+            "text": "#FFFFFF",
+            "icon": "#FFFFFF",
+            "borderRadius": "12px",
+            "shadow": "0px 4px 8px rgba(0,0,0,0.1)"
+          },
+          "hover": {
+            "background": "linear-gradient(90deg, #2E6046 0%, #5C8C70 100%)"
+          },
+          "active": {
+            "background": "#2E6046"
+          },
+          "disabled": {
+            "background": "#EAEAEA",
+            "text": "#999999",
+            "icon": "#999999"
+          }
+        },
+        "secondary": {
+          "default": {
+            "background": "#FFFFFF",
+            "border": "1px solid #C8C8C8",
+            "text": "#333333",
+            "icon": "#3A7C59",
+            "borderRadius": "12px"
+          },
+          "hover": {
+            "background": "#F8F8F4"
+          }
+        }
+      },
+      "navigation": {
+        "background": "#FFFFFF",
+        "borderBottom": "1px solid #EAEAEA",
+        "icons": {
+          "default": "#6B6B6B",
+          "active": "#3A7C59",
+          "hover": "#2E6046"
+        }
+      },
+      "tables": {
+        "header": {
+          "background": "#F8F8F4",
+          "textColor": "#333333",
+          "borderBottom": "1px solid #EAEAEA"
+        },
+        "row": {
+          "background": "#FFFFFF",
+          "borderBottom": "1px solid #F0F0F0",
+          "hover": {
+            "background": "#F8F8F4"
+          }
+        }
+      },
+      "charts": {
+        "line": {
+          "colorPrimary": "#3A7C59",
+          "colorSecondary": "#6FAE8A"
+        },
+        "bar": {
+          "fill": "#FFD55A",
+          "hoverFill": "#F39C12"
+        },
+        "radar": {
+          "stroke": "#3A7C59",
+          "fill": "rgba(58, 124, 89, 0.2)"
+        }
+      },
+      "badges": {
+        "success": { "background": "#E9F7EF", "text": "#4CAF50" },
+        "error": { "background": "#FDEDEC", "text": "#E74C3C" },
+        "warning": { "background": "#FEF5E7", "text": "#F39C12" },
+        "info": { "background": "#EBF5FB", "text": "#3498DB" }
+      }
+    },
+    "shadows": {
+      "card": "0 4px 12px rgba(0,0,0,0.08)",
+      "button": "0 4px 8px rgba(0,0,0,0.1)",
+      "hover": "0 6px 16px rgba(0,0,0,0.12)"
+    },
+    "borderRadius": {
+      "small": "8px",
+      "medium": "12px",
+      "large": "16px",
+      "xlarge": "24px"
+    },
+    "animations": {
+      "hoverLift": {
+        "transform": "translateY(-2px)",
+        "transition": "all 0.2s ease-in-out"
+      },
+      "buttonPress": {
+        "transform": "scale(0.96)",
+        "transition": "all 0.1s ease-in-out"
+      }
+    },
+    "doNotRules": {
+      "doNotApplyCardGradientOnIcons": true,
+      "doNotUseButtonColorsForText": true,
+      "doNotApplyShadowsOnText": true,
+      "doNotUseNeutralGrayOnPrimaryButtons": true
+    }
+  }
+}
