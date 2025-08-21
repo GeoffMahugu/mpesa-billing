@@ -1,19 +1,23 @@
 {
-  "servers": {
-    "MongoDB": {
-      "command": "docker",
-      "args": [
-        "run",
-        "--rm",
-        "-i",
-        "-e",
-        "MDB_MCP_READ_ONLY=true",
-        "-e",
-        "MDB_MCP_API_CLIENT_ID=$MDB_MCP_API_CLIENT_ID",
-        "-e",
-        "MDB_MCP_API_CLIENT_SECRET=$MDB_MCP_API_CLIENT_SECRET",
-        "mongodb/mongodb-mcp-server:latest"
-      ]
-    }
-  }
+	"servers": {
+		"MongoDB": {
+			"command": "npx",
+			"args": [
+				"-y",
+				"mongodb-mcp-server"
+			],
+      "envFile":"${workspaceFolder}/.env",
+			// "env": {
+			// 	"MDB_MCP_API_CLIENT_ID": "$MDB_MCP_API_CLIENT_ID",
+			// 	"MDB_MCP_API_CLIENT_SECRET": "$MDB_MCP_API_CLIENT_SECRET"
+			// },
+			"type": "stdio"
+		},
+		"my-mcp-server-2aafb874": {
+			"type": "stdio",
+			"command": "/list",
+			"args": []
+		}
+	},
+	"inputs": []
 }
