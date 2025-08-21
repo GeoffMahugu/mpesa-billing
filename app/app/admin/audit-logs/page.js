@@ -1,8 +1,5 @@
 'use client'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/table'
-import { Input } from '@nextui-org/input'
-import { Select, SelectItem } from '@nextui-org/select'
-import { Button } from '@nextui-org/button'
+import { Table, Input, Select, Button, SelectItem } from '@/components/ui'
 import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -66,9 +63,9 @@ export default function AuditLogsPage() {
           value={filters.action}
           onChange={(e) => handleFilterChange('action', e.target.value)}
         >
-          <SelectItem key="create">Create</SelectItem>
-          <SelectItem key="update">Update</SelectItem>
-          <SelectItem key="delete">Delete</SelectItem>
+          <SelectItem value="create">Create</SelectItem>
+          <SelectItem value="update">Update</SelectItem>
+          <SelectItem value="delete">Delete</SelectItem>
         </Select>
         <Select
           label="Actor"
@@ -77,7 +74,7 @@ export default function AuditLogsPage() {
           onChange={(e) => handleFilterChange('actor', e.target.value)}
         >
           {Array.from(new Set(logs.map(log => log.actorId))).map(id => (
-            <SelectItem key={id} value={id}>{id}</SelectItem>
+            <SelectItem value={id}>{id}</SelectItem>
           ))}
         </Select>
         <Button onClick={() => setFilters({ search: '', action: '', actor: '' })}>
@@ -86,24 +83,26 @@ export default function AuditLogsPage() {
       </div>
 
       <Table aria-label="Audit logs">
-        <TableHeader>
-          <TableColumn>Timestamp</TableColumn>
-          <TableColumn>Actor</TableColumn>
-          <TableColumn>Action</TableColumn>
-          <TableColumn>Target</TableColumn>
-          <TableColumn>Details</TableColumn>
-        </TableHeader>
-        <TableBody>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Actor</th>
+            <th>Action</th>
+            <th>Target</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
           {logs.map(log => (
-            <TableRow key={log._id}>
-              <TableCell>{new Date(log.createdAt).toLocaleString()}</TableCell>
-              <TableCell>{log.actorId}</TableCell>
-              <TableCell>{log.action}</TableCell>
-              <TableCell>{log.target}</TableCell>
-              <TableCell>{JSON.stringify(log.meta)}</TableCell>
-            </TableRow>
+            <tr key={log._id}>
+              <td>{new Date(log.createdAt).toLocaleString()}</td>
+              <td>{log.actorId}</td>
+              <td>{log.action}</td>
+              <td>{log.target}</td>
+              <td>{JSON.stringify(log.meta)}</td>
+            </tr>
           ))}
-        </TableBody>
+        </tbody>
       </Table>
     </div>
   )
