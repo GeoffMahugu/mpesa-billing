@@ -2,19 +2,22 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
+import Image from 'next/image';
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function Products() {
-  const { data: session } = useSession();
-
-  if (!session) {
-    redirect('/auth/signin');
-  }
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
+      return;
+    }
+
     async function fetchProducts() {
       try {
         const res = await fetch('/api/products');
@@ -25,14 +28,19 @@ export default function Products() {
         setProducts(data.items);
       } catch (error) {
         console.error(error);
-        // Handle error state here, e.g., show a toast message
       } finally {
         setLoading(false);
       }
     }
 
-    fetchProducts();
-  }, []);
+    if (status === 'authenticated') {
+      fetchProducts();
+    }
+  }, [status, router]);
+
+  if (status === 'loading' || status === 'unauthenticated') {
+    return <div className="min-h-screen bg-neutral-off-white"></div>;
+  }
 
   return (
     <div className="min-h-screen bg-neutral-off-white">
@@ -67,7 +75,17 @@ export default function Products() {
             {products.map((product) => (
               <Link key={product._id} href={`/products/${product._id}`}>
                 <div className="bg-neutral-white rounded-lg shadow-card hover:shadow-hover transition-shadow duration-300">
-                  <img src={product.images[0]} alt={product.name} className="w-full h-48 object-cover rounded-t-lg" />
+                  <div className="w-full h-48 relative">
+                    <Image 
+                      src={product.images[0]} 
+                      alt={product.name} 
+                      width={300}
+                      height={192}
+                      priority
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover rounded-t-lg"
+                    />
+                  </div>
                   <div className="p-4">
                     <h3 className="text-lg font-semibold text-neutral-dark">{product.name}</h3>
                     <p className="text-primary font-bold">{product.currency} {product.price}</p>

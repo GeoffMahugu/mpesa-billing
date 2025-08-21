@@ -12,25 +12,33 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
         email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         await dbConnect();
 
         const user = await User.findOne({ email: credentials.email });
 
-        if (user && bcrypt.compareSync(credentials.password, user.passwordHash)) {
-          return { id: user._id, name: user.name, email: user.email, role: user.role };
+        if (
+          user &&
+          bcrypt.compareSync(credentials.password, user.passwordHash)
+        ) {
+          return {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          };
         }
         return null;
-      }
-    })
+      },
+    }),
   ],
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -44,14 +52,22 @@ export const authOptions = {
       session.user.id = token.id;
       session.user.role = token.role;
       return session;
-    }
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/auth/signin',
+    signIn: "/auth/signin",
   },
 };
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+export {
+  handler as GET,
+  handler as POST,
+  handler as PUT,
+  handler as DELETE,
+  handler as PATCH,
+  handler as OPTIONS,
+  handler as HEAD,
+};
