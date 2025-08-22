@@ -1,43 +1,26 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
 
 export async function GET(req) {
-    await dbConnect();
+  console.log("GET /api/products called");
+  const conn = await dbConnect();
+  console.log("Database connection state:", conn.connection.readyState);
 
-    const { searchParams } = new URL(req.url);
-    const q = searchParams.get("q");
-    const limit = parseInt(searchParams.get("limit")) || 10;
-    const page = parseInt(searchParams.get("page")) || 1;
-    const sort = searchParams.get("sort") || "-createdAt";
+  const { searchParams } = new URL(req.url);
+  const limit = parseInt(searchParams.get("limit")) || 10;
 
-    const query = q ? { name: { $regex: q, $options: "i" } } : {};
+  console.log("Limit:", limit);
 
-    const products = await Product.find(query)
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .sort(sort);
+  const products = await Product.find()
+    .limit(limit);
 
-    const total = await Product.countDocuments(query);
+  console.log("Products found:", products);
 
-
-  return NextResponse.json({
-    items: products,
-    total,
-    page,
-    pages: Math.ceil(total / limit),
-  });
+  return NextResponse.json(products);
 }
 
 export async function POST(req) {
-  const session = await getServerSession(authOptions);
-
-  if (!session || session.user.role !== 'admin') {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
-
   await dbConnect();
 
   const body = await req.json();

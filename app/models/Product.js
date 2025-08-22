@@ -34,7 +34,6 @@ const ProductSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-ProductSchema.index({ slug: 1 }, { unique: true });
 ProductSchema.index({ price: 1 });
 ProductSchema.index({ active: 1 });
 
