@@ -1,26 +1,27 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
 
 export async function GET(req) {
-  await dbConnect();
+    await dbConnect();
 
-  const { searchParams } = new URL(req.url);
-  const q = searchParams.get('q');
-  const limit = parseInt(searchParams.get('limit')) || 10;
-  const page = parseInt(searchParams.get('page')) || 1;
-  const sort = searchParams.get('sort') || '-createdAt';
+    const { searchParams } = new URL(req.url);
+    const q = searchParams.get("q");
+    const limit = parseInt(searchParams.get("limit")) || 10;
+    const page = parseInt(searchParams.get("page")) || 1;
+    const sort = searchParams.get("sort") || "-createdAt";
 
-  const query = q ? { name: { $regex: q, $options: 'i' } } : {};
+    const query = q ? { name: { $regex: q, $options: "i" } } : {};
 
-  const products = await Product.find(query)
-    .limit(limit)
-    .skip((page - 1) * limit)
-    .sort(sort);
+    const products = await Product.find(query)
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .sort(sort);
 
-  const total = await Product.countDocuments(query);
+    const total = await Product.countDocuments(query);
+
 
   return NextResponse.json({
     items: products,

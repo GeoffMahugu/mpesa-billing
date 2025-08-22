@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/api/auth/[...nextauth]/route';
-import bcrypt from 'bcrypt';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
 
@@ -15,17 +14,11 @@ export async function PATCH(req) {
   await dbConnect();
 
   const body = await req.json();
-  const { newPassword } = body;
-
-  if (!newPassword) {
-    return NextResponse.json({ message: 'New password is required' }, { status: 400 });
-  }
-
-  const passwordHash = await bcrypt.hash(newPassword, 12);
+  const { name, email } = body;
 
   const updatedUser = await User.findByIdAndUpdate(
     session.user.id,
-    { passwordHash },
+    { name, email },
     { new: true }
   );
 
@@ -33,5 +26,5 @@ export async function PATCH(req) {
     return NextResponse.json({ message: 'User not found' }, { status: 404 });
   }
 
-  return NextResponse.json({ message: 'Password updated successfully' });
+  return NextResponse.json(updatedUser);
 }
