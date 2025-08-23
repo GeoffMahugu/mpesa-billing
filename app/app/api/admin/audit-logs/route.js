@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { AuditLog } from "@/models/AuditLog";
+import AuditLog from "@/models/AuditLog";
 import dbConnect from "@/lib/db";
 
 export async function GET() {
