@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import AuditLog from '../models/AuditLog';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -22,12 +23,19 @@ async function dbConnect() {
       bufferCommands: false,
     };
 
-cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-  return mongoose;
-});
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+      return mongoose;
+    });
   }
   cached.conn = await cached.promise;
   return cached.conn;
+}
+
+export const connectToDB = dbConnect;
+
+export async function getAuditLogs() {
+  await dbConnect();
+  return AuditLog.find().exec();
 }
 
 export default dbConnect;

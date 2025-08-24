@@ -1,8 +1,8 @@
 import { getSession } from 'next-auth/react';
 import db from '@/lib/db';
-import { BusinessAccount } from '@/models/BusinessAccount';
-import { Order } from '@/models/Order';
-import { Transaction } from '@/models/Transaction';
+import BusinessAccount from '@/models/BusinessAccount';
+import Order from '@/models/Order';
+import Transaction from '@/models/Transaction';
 
 export default async function handler(req, res) {
   const session = await getSession({ req });

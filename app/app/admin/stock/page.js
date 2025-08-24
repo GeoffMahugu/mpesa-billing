@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/data-table'
-import { ShadcnDialog } from '@/components/ui';
+import { Dialog } from '@/components/ui/shadcn-dialog';
 import { ProductForm } from './components/ProductForm'
 import { UploadCSV } from './components/UploadCSV'
 import { columns } from './columns'
@@ -50,7 +50,7 @@ export default function StockPage() {
         onDelete={(id) => setProducts(products.filter(p => p._id !== id))}
       />
 
-<ShadcnDialog
+<Dialog
   open={isDrawerOpen}
   onOpenChange={(open) => setIsDrawerOpen(open)}
 >
@@ -59,7 +59,7 @@ export default function StockPage() {
     onSave={handleSave}
     onCancel={() => setIsDrawerOpen(false)}
   />
-</ShadcnDialog>
+</Dialog>
     </div>
   )
 }

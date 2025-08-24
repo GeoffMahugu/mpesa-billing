@@ -4,7 +4,8 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
 
-export async function GET(req, { params }) {
+export async function GET(req, context) {
+  const { params } = await context;
   await dbConnect();
 
   const product = await Product.findById(params.id);
@@ -16,7 +17,8 @@ export async function GET(req, { params }) {
   return NextResponse.json(product);
 }
 
-export async function PATCH(req, { params }) {
+export async function PATCH(req, context) {
+  const { params } = await context;
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== 'admin') {
@@ -35,7 +37,8 @@ export async function PATCH(req, { params }) {
   return NextResponse.json(updatedProduct);
 }
 
-export async function DELETE(req, { params }) {
+export async function DELETE(req, context) {
+  const { params } = await context;
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== 'admin') {

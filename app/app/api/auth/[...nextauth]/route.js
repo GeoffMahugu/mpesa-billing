@@ -22,16 +22,18 @@ export const authOptions = {
 
         const user = await User.findOne({ email: credentials.email });
 
-        if (
-          user &&
-          bcrypt.compareSync(credentials.password, user.passwordHash)
-        ) {
+        console.log('User found:', user);
+
+        if (user && bcrypt.compareSync(credentials.password, user.passwordHash)) {
+          console.log('Password comparison succeeded');
           return {
             id: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
           };
+        } else {
+          console.log('Authentication failed:', user ? 'Password mismatch' : 'User not found');
         }
         return null;
       },

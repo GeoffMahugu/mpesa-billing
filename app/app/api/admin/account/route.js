@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import { BusinessAccount } from '@/models/BusinessAccount'
+import BusinessAccount from '@/models/BusinessAccount'
 import { connectToDB } from '@/lib/db'
 import { ForbiddenError } from '@/errors'
 
