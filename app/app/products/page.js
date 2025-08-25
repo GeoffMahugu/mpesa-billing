@@ -25,7 +25,7 @@ export default function Products() {
           throw new Error('Failed to fetch products');
         }
         const data = await res.json();
-        setProducts(data.items);
+        setProducts(data);
       } catch (error) {
         console.error(error);
       } finally {

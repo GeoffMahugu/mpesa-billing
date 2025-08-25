@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 
 export default function ProductDetails() {
   const [product, setProduct] = useState(null);
@@ -59,7 +60,7 @@ export default function ProductDetails() {
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <img src={product.images[0]} alt={product.name} className="w-full h-auto object-cover rounded-lg shadow-card" />
+            <Image src={product.images[0]} alt={product.name} width={800} height={600} className="w-full h-auto object-cover rounded-lg shadow-card" />
             {/* Placeholder for 3D view */}
             <div className="mt-8 w-full h-64 bg-neutral-gray-light rounded-lg flex items-center justify-center">
               <p className="text-neutral-dark">3D View Placeholder</p>

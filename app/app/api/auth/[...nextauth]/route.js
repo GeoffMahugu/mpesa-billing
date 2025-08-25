@@ -17,26 +17,35 @@ export const authOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
-        await dbConnect();
+  async authorize(credentials) {
+    await dbConnect();
 
-        const user = await User.findOne({ email: credentials.email });
+    console.log('Credentials:', credentials);
 
-        if (
-          user &&
-          bcrypt.compareSync(credentials.password, user.passwordHash)
-        ) {
-          return {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-          };
-        }
-        return null;
-      },
-    }),
-  ],
+    const user = await User.findOne({ email: credentials.email });
+
+    console.log('User found:', user);
+
+    if (!user) {
+      console.log('User not found');
+      return null;
+    }
+
+    if (bcrypt.compareSync(credentials.password, user.passwordHash)) {
+      console.log('Password comparison succeeded');
+      return {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      };
+    } else {
+      console.log('Password comparison failed');
+      return null;
+    }
+  },
+}),
+],
   session: {
     strategy: "jwt",
   },

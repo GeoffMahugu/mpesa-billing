@@ -74,7 +74,7 @@ export default function AuditLogsPage() {
           onChange={(e) => handleFilterChange('actor', e.target.value)}
         >
           {Array.from(new Set(logs.map(log => log.actorId))).map(id => (
-            <SelectItem value={id}>{id}</SelectItem>
+            <SelectItem key={id} value={id}>{id}</SelectItem>
           ))}
         </Select>
         <Button onClick={() => setFilters({ search: '', action: '', actor: '' })}>

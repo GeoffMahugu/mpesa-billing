@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function SignIn() {
@@ -10,20 +10,20 @@ export default function SignIn() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const result = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-    });
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const result = await signIn('credentials', {
+    redirect: false,
+    email,
+    password,
+  });
 
-    if (result.error) {
-      setError('Invalid credentials');
-    } else {
-      router.push('/products');
-    }
-  };
+  if (result.error) {
+    setError('Invalid credentials');
+  } else {
+    router.push('/api/auth/redirect');
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-neutral-off-white">
@@ -58,7 +58,13 @@ export default function SignIn() {
             Sign In
           </button>
         </form>
-        <div className="relative">
+        <p className="mt-4 text-center text-sm text-neutral-dark">
+          Don't have an account?{' '}
+          <a href="/auth/signup" className="text-primary hover:underline">
+            Sign Up
+          </a>
+        </p>
+        <div className="relative mt-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-neutral-gray"></div>
           </div>
@@ -66,10 +72,10 @@ export default function SignIn() {
             <span className="px-2 bg-neutral-white text-neutral-dark">Or continue with</span>
           </div>
         </div>
-        <button
-          onClick={() => signIn('google', { callbackUrl: '/products' })}
-          className="w-full py-2 text-neutral-dark border rounded-md border-neutral-gray hover:bg-neutral-gray-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-        >
+<button
+  onClick={() => signIn('google')}
+  className="w-full py-2 text-neutral-dark border rounded-md border-neutral-gray hover:bg-neutral-gray-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+>
           Sign In with Google
         </button>
       </div>
