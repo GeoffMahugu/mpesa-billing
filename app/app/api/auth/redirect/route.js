@@ -12,6 +12,6 @@ export async function GET(req) {
   if (session.user.role === 'admin') {
     return NextResponse.redirect(new URL('/admin/dashboard', req.url));
   } else {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
+    return NextResponse.redirect(new URL('/orders', req.url));
   }
 }
