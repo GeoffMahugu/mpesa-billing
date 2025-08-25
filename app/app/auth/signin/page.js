@@ -59,7 +59,7 @@ const handleSubmit = async (e) => {
           </button>
         </form>
         <p className="mt-4 text-center text-sm text-neutral-dark">
-          Don't have an account?{' '}
+          Do not have an account?{' '}
           <a href="/auth/signup" className="text-primary hover:underline">
             Sign Up
           </a>
