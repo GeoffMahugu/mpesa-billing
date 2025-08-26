@@ -1,8 +1,8 @@
 /** @type {import('tailwindcss').Config} */
-const theme = require("./lib/ai_theme_rules.json");
+import theme from "./lib/ai_theme_rules.json";
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: "class",
   content: [
     "./app/**/*.{js,jsx}",
