@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 export default function SignUp() {
   const [name, setName] = useState('');
@@ -11,6 +12,10 @@ export default function SignUp() {
   const [error, setError] = useState('');
   const [passwordStrength, setPasswordStrength] = useState(0);
   const router = useRouter();
+
+  const handleGoogleSignUp = async () => {
+    await signIn('google', { callbackUrl: '/admin/dashboard' });
+  };
 
   const checkPasswordStrength = (password) => {
     let strength = 0;
@@ -109,6 +114,16 @@ export default function SignUp() {
             className="w-full py-2 text-white rounded-md bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
           >
             Sign Up
+          </button>
+          <div className="flex items-center justify-center mt-4">
+            <span className="text-sm text-neutral-dark">Or sign up with</span>
+          </div>
+          <button
+            type="button"
+            onClick={handleGoogleSignUp}
+            className="w-full py-2 text-white rounded-md bg-secondary hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary"
+          >
+            Google
           </button>
         </form>
       </div>

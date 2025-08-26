@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
+import { getServerSession } from "next-auth/next";
 import bcrypt from 'bcrypt';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
@@ -51,16 +52,61 @@ export const authOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
+      console.log('JWT callback - user:', user);
       if (user) {
         token.id = user.id;
         token.role = user.role;
       }
+      console.log('JWT callback - token:', token);
       return token;
     },
     async session({ session, token }) {
+      console.log('Session callback - token:', token);
       session.user.id = token.id;
       session.user.role = token.role;
+      console.log('Session callback - session:', session);
       return session;
+    },
+    async signIn({ user, account, profile }) {
+      console.log('SignIn callback - user:', user);
+      console.log('SignIn callback - account:', account);
+      console.log('SignIn callback - profile:', profile);
+
+      if (account.provider === 'google') {
+        await dbConnect();
+        const existingUser = await User.findOne({ email: user.email });
+
+        if (!existingUser) {
+          // Create new user with default role 'user'
+          const newUser = await User.create({
+            name: user.name,
+            email: user.email,
+            role: 'user',
+          });
+          user.id = newUser._id;
+          user.role = newUser.role;
+        } else {
+          user.id = existingUser._id;
+          user.role = existingUser.role;
+
+          // Update existing user's name and image if they have changed
+          if (existingUser.name !== user.name || existingUser.image !== user.image) {
+            existingUser.name = user.name;
+            existingUser.image = user.image;
+            await existingUser.save();
+          }
+        }
+      }
+      return true;
+    },
+    async redirect({ url, baseUrl }) {
+      // Redirect to orders page for users, admin dashboard for admins
+      const session = await getServerSession(authOptions);
+      if (session && session.user.role === 'admin') {
+        return `${baseUrl}/admin/dashboard`;
+      } else {
+        return `${baseUrl}/orders`;
+      }
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

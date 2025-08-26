@@ -3,7 +3,7 @@ import { Table, Input, Select, Button, SelectItem } from '@/components/ui'
 import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { getAuditLogs } from '@/lib/db'
+import { getAuditLogs } from '@/models/AuditLog.repository'
 
 export default function AuditLogsPage() {
   const { data: session } = useSession({
