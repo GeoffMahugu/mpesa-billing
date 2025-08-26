@@ -31,4 +31,4 @@ const AuditLogSchema = new mongoose.Schema({
 AuditLogSchema.index({ actorId: 1 });
 AuditLogSchema.index({ createdAt: -1 });
 
-export default mongoose.models.AuditLog || mongoose.model('AuditLog', AuditLogSchema);
+export default mongoose.models.AuditLog ?? mongoose.model('AuditLog', AuditLogSchema);
