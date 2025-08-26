@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { signOut } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function Dashboard() {
   // Placeholder data
@@ -17,13 +19,33 @@ export default function Dashboard() {
   const [balanceVisible, setBalanceVisible] = useState(false);
 
   return (
-    <div className="min-h-screen bg-neutral-off-white">
-      <header className="bg-neutral-white shadow-md">
-        <div className="container mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-primary">Admin Dashboard</h1>
-        </div>
-      </header>
-      <main className="container mx-auto px-4 py-8">
+    <div className="flex min-h-screen bg-neutral-off-white">
+      <aside className="w-64 bg-neutral-white shadow-md p-4">
+        <h2 className="text-lg font-bold text-primary mb-4">Menu</h2>
+        <ul>
+          <li className="mb-2">
+            <Link href="/admin/account" className="text-primary hover:text-primary-dark">Account</Link>
+          </li>
+          <li className="mb-2">
+            <Link href="/admin/stock" className="text-primary hover:text-primary-dark">Stock</Link>
+          </li>
+          <li className="mb-2">
+            <Link href="/admin/sales" className="text-primary hover:text-primary-dark">Sales</Link>
+          </li>
+          <li className="mb-2">
+            <Link href="/admin/audit-logs" className="text-primary hover:text-primary-dark">Audit Logs</Link>
+          </li>
+          <li className="mb-2">
+            <button onClick={() => signOut({ callbackUrl: '/auth/signin' })} className="text-primary hover:text-primary-dark">Sign Out</button>
+          </li>
+        </ul>
+      </aside>
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <header className="bg-neutral-white shadow-md mb-8">
+          <div className="container mx-auto px-4 py-4">
+            <h1 className="text-2xl font-bold text-primary">Admin Dashboard</h1>
+          </div>
+        </header>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="bg-neutral-white rounded-lg shadow-card p-6">
             <h3 className="text-lg font-semibold text-neutral-dark">Available Stock</h3>
